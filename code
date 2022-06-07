@@ -1,0 +1,93 @@
+import javax.swing.*;
+import java.util.Date;
+import java.io.*;
+import java.awt.*;
+import java.sql.*;
+import java.lang.*;
+import java.awt.event.*;
+
+public class CreateTable extends Frame {
+
+    String driverClass = "org.gjt.mm.mysql.Driver";
+    String connectString = "jdbc::mysql://localhost:3306/JavaNet?useUnicode=true";
+    String user="root";
+    String pass="";
+    Connection conn;
+    TextField tabname;
+    TextField arg1, var1;
+    TextField arg2, var2;
+    TextField arg3, var3;
+    Button Create, Cancel;
+    TextField output;
+
+    String tabnameStr=null;
+    String arg1Str=null;
+    String var1Str=null;
+    String arg2Str=null;
+    String var2Str=null;
+    String arg3Str=null;
+    String var3Str=null;
+
+    public CreateTable() {
+        setLayout(new GridLayout(7, 2, 5, 5));
+        add(new Label("테이블 이름", Label.RIGHT));
+        add(tabname = new TextField());
+        add(new Label("컬럼 이름", Label.CENTER));
+        add(new Label("데이터 타입", Label.CENTER));
+        add(arg1 = new TextField("id"));
+        add(var1 = new TextField("int"));
+        add(arg2 = new TextField("name"));
+        add(var2 = new TextField("varchar(10)"));
+        add(arg3 = new TextField("Create"));
+        add(var3 = new TextField("Cancel"));
+        Create.addActionListener(new CreateHandler());
+        Cancel.addActionListener(new CreateHandler());
+        add(new Label("실행 결과", Label.RIGHT));
+        add(output=new TextField());
+        setSize(400,500);
+        setVisible(true);
+    }
+
+    class CreateHandler implements ActionListener{
+        public void actionPerformed(ActionEvent ae){
+            tabnameStr=tabname.getText();
+            arg1Str=arg1.getText();
+            var1Str=var1.getText();
+            arg2Str=arg2.getText();
+            var2Str=var2.getText();
+            arg3Str=arg3.getText();
+            var3Str=var3.getText();
+
+            String query="CREATE TABLE "+tabnameStr+"(";
+            query+=arg1Str+" "+var1Str+", ";
+            query+=arg2Str+" "+var2Str+", ";
+            query+=arg3Str+" "+var3Str+", ";
+            try {
+                Class.forName(driverClass);
+                conn = DriverManager.getConnection(connectString, user, pass);
+                Statement stmt = conn.createStatement();
+                stmt.execute(query);
+                output.setText("테이블이 만들어졌습니다.");
+            }catch(Exception e){
+                output.setText("오류 발생: Create");
+                System.exit(0);
+            }
+        }
+    }
+    class CancelHandler implements  ActionListener{
+        public void actionPerformed(ActionEvent e){
+            arg1.setText("");
+            var1.setText("");
+            arg2.setText("");
+            var2.setText("");
+            arg3.setText("");
+            var3.setText("");
+            output.setText("");
+        }
+    }
+
+    public static void main(String[] args){
+        new CreateTable();
+    }
+
+}
